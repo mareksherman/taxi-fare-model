@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/marek/code/mareksherman/TaxiFareModel/mlruns/1/2b1c46d0303c4b9d8d5084c820c276e8/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: 2b1c46d0303c4b9d8d5084c820c276e8
+run_uuid: 2b1c46d0303c4b9d8d5084c820c276e8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1637153892811
+status: 1
+tags: []
+user_id: unknown
