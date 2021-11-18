@@ -11,9 +11,13 @@ from mlflow.tracking import MlflowClient
 from memoized_property import memoized_property
 import joblib
 from termcolor import colored
+from TaxiFareModel.params import BUCKET_NAME
+from google.cloud import storage
 
 MLFLOW_URI = "https://mlflow.lewagon.co/"
 EXPERIMENT_NAME = "[DE] [Munich] [mareksherman] lin reg v.01"
+STORAGE_LOCATION = 'models/simpletaxifare/model.joblib'
+
 
 class Trainer():
     def __init__(self, X, y):
@@ -66,6 +70,10 @@ class Trainer():
         """Save the model into a .joblib format"""
         joblib.dump(self.pipeline, 'model.joblib')
         print(colored("model.joblib saved locally", "green"))
+        self.upload_model_to_gcp()
+        print(
+            f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}"
+        )
 
     @memoized_property
     def mlflow_client(self):
@@ -90,6 +98,11 @@ class Trainer():
     def mlflow_log_metric(self, key, value):
         self.mlflow_client.log_metric(self.mlflow_run.info.run_id, key, value)
 
+    def upload_model_to_gcp(self):
+        client = storage.Client()
+        bucket = client.bucket(BUCKET_NAME)
+        blob = bucket.blob(STORAGE_LOCATION)
+        blob.upload_from_filename('model.joblib')
 
 if __name__ == "__main__":
     df = get_data(nrows=1000)
@@ -106,7 +119,7 @@ if __name__ == "__main__":
     rsme = trainer.evaluate(X_test,y_test)
     print(rsme)
     trainer.save_model()
-    experiment_id = trainer.mlflow_experiment_id
 
+    experiment_id = trainer.mlflow_experiment_id
     print(
     f"experiment URL: https://mlflow.lewagon.co/#/experiments/{experiment_id}")
